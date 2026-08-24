@@ -16,7 +16,7 @@ raw_data={
     'payment_gateway':np.random.choice(gateways,n_orders,[0.2,0.1,0.4,0.1,0.2]),
     'unit_price':np.random.uniform(50.0,150.0,size=n_orders),
     'quantity':np.random.randint(1,11,size=n_orders),
-    'discount_pct':np.random.normal(0.08,1,n_orders),
+    'discount_pct':np.random.normal(0.5,1,n_orders),
     'order_status':np.random.choice(statuses,n_orders,[0.5,0.1,0.2,0.2]),
     'shipping_cost':np.random.uniform(20.0,80.0,n_orders)
 }
@@ -47,3 +47,10 @@ print('='*40)
 df['gross_revenue']=df['unit_price']*df['quantity']
 df['discount_amount']=df['gross_revenue']*df['discount_pct']
 df['net_revenue']=df['gross_revenue']-df['discount_amount']
+print("="*40)
+print("After adding other columns")
+print(df)
+print("="*40)
+
+net_revenue_uncompleted=df.query("order_status in ['Cancelled' ,'Pending' ,'Failed'")['net_revenue'].sum()
+df['risk_flag']=np.where((df['discount_pct']>=0.5)|((df['order_status'] in ['Failed','Refunded']) &(df['net_revenue']>1000)),'CRITICAL','NORMAL')
