@@ -28,3 +28,22 @@ df.loc[df.sample(20).index,'unit_price']=np.nan
 
 df['unit_price']=df['unit_price'].astype(str)
 df[df.sample(10).index,'unit_price']="UNKNOWN"
+
+print("The generated data initially")
+print(df)
+
+median_price_per_region=df.groupby('region')['unit_price'].median()
+df['unit_price']=pd.to_numeric(df['unit_price']).fillna(median_price_per_region)
+
+payment_mode=df['payment_gateway'].mode()[0]
+df['payment_gateway']=df['payment_gateway'].fillna[payment_mode]
+
+print('='*40)
+print("After some cleaning of data")
+print(df)
+print('='*40)
+
+#Adding other columns
+df['gross_revenue']=df['unit_price']*df['quantity']
+df['discount_amount']=df['gross_revenue']*df['discount_pct']
+df['net_revenue']=df['gross_revenue']-df['discount_amount']
